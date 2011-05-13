@@ -143,17 +143,18 @@ void loop(){
     if (analogRead(mainCylinder) < 500){
       main_toggle = 1;
     }
-    if (main_toggle = 1 && analogRead(mainCylinder) > 500){
+    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
       digitalWrite(DOWN,  LOW);
     }
   }
 
   // C2 motion from middle to right.
+  main_toggle = 0;
   while(analogRead(secCylinder) < 500){
     if (analogRead(mainCylinder) < 500){
       main_toggle = 1;
     }
-    if (main_toggle = 1 && analogRead(mainCylinder) > 500){
+    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
       digitalWrite(DOWN,  LOW);
     }
   }
@@ -163,11 +164,12 @@ void loop(){
 
   // Complete down motion of C1. This allows for continuation of
   // motion. This works if motion is completed already.
+  main_toggle = 0;
   while(true){
     if (analogRead(mainCylinder) < 500){
       main_toggle = 1;
     }
-    if (analogRead(mainCylinder) > 500 && main_toggle == 1){
+    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
       break;
     }
   }
