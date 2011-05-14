@@ -18,6 +18,10 @@ information about compressed earth blocks.
     cd ceb-controller/cebController
     scons
 
+### Upload to attached Arduino
+
+    scons upload
+
 --------------------------------------------------------------------------------------
 
 ### Part of the [Global Village Construction Set](http://opensourceecology.org/gvcs.php)
