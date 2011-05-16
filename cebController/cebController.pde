@@ -23,6 +23,12 @@
 #define RIGHT   9
 #define HOPPER  11
 
+// #define directives for common conditionals
+// -----------------------------------------------------
+// AnalogRead conditionals
+#define is_upper(pin) (analogRead(pin) > 500)
+#define is_lower(pin) (analogRead(pin) < 500)
+
 
 int main_val;    // main cylinder
 int sec_val;     // secondary cylinder
@@ -68,49 +74,49 @@ void setup(){
 
   // 3. Zero main cylinder.
   digitalWrite(DOWN, HIGH);
-  while (analogRead(mainCylinder) < 500){}
+  while (is_lower(mainCylinder)){}
   digitalWrite(DOWN, LOW);
 
   // 4. Zero secondary cylinder.
   digitalWrite(LEFT, HIGH);
-  while(analogRead(secCylinder) < 500){}
+  while (is_lower(secCylinder)){}
   digitalWrite(LEFT, LOW);
 
   // 5. Eject soil from chamber with main cylinder. (Go up to mid,
   // then go up to top.)
   digitalWrite(UP,  HIGH);
-  while (analogRead(mainCylinder) > 500){}
-  while (analogRead(mainCylinder) < 500){}
+  while (is_upper(mainCylinder)){}
+  while (is_lower(mainCylinder)){}
   digitalWrite(UP,  LOW);
 
   // 6. Push soil out of way with secondary cylinder by moving right
   // and stop in closed compression chamber position.
   digitalWrite(RIGHT,  HIGH);
-  while(analogRead(secCylinder) > 500){}
+  while (is_upper(secCylinder)){}
   digitalWrite(RIGHT,  LOW);
 
   // 7. Initialize secondary cylinder.
   digitalWrite(LEFT,  HIGH);
-  while(analogRead(secCylinder) < 500){}
+  while (is_lower(secCylinder)){}
   digitalWrite(LEFT,  LOW);
 
   // 8. Calibrate main cylinder (move from top to bottom and measure T in 2 stages)
   // Move down to -,  measuring down motion time T1
   start_time = millis();
   digitalWrite(DOWN,  HIGH);
-  while (analogRead(mainCylinder) > 500){}
+  while (is_upper(mainCylinder)){}
   motion_time += millis() - start_time;
 
   // 9. Move down to +,  measuring down motion time T2
   start_time = millis();
-  while (analogRead(mainCylinder) < 500){}
+  while (is_lower(mainCylinder)){}
   motion_time += millis() - start_time;
   digitalWrite(DOWN,  LOW);
 
   // 10. Move main cylinder to terminal position.
   digitalWrite(UP,  HIGH);
-  while (analogRead(mainCylinder) > 500){}
-  while (analogRead(mainCylinder) < 500){}
+  while (is_upper(mainCylinder)){}
+  while (is_lower(mainCylinder)){}
   digitalWrite(UP,  LOW);
 
   // 11. Wait 5 seconds. If stopped and not zeroed,  cycle controller.
@@ -132,22 +138,22 @@ void loop(){
   sec_toggle = 0;
 
   // C2 motion from left to middle.
-  while(analogRead(secCylinder) > 500){
-    if (analogRead(mainCylinder) < 500){
+  while (is_upper(secCylinder)){
+    if (is_lower(mainCylinder)){
       main_toggle = 1;
     }
-    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
+    if (main_toggle == 1 && is_upper(mainCylinder)){
       digitalWrite(DOWN,  LOW);
     }
   }
 
   // C2 motion from middle to right.
   main_toggle = 0;
-  while(analogRead(secCylinder) < 500){
-    if (analogRead(mainCylinder) < 500){
+  while (is_lower(secCylinder)){
+    if (is_lower(mainCylinder)){
       main_toggle = 1;
     }
-    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
+    if (main_toggle == 1 && is_upper(mainCylinder)){
       digitalWrite(DOWN,  LOW);
     }
   }
@@ -158,11 +164,11 @@ void loop(){
   // Complete down motion of C1. This allows for continuation of
   // motion. This works if motion is completed already.
   main_toggle = 0;
-  while(true){
-    if (analogRead(mainCylinder) < 500){
+  while (true){
+    if (is_lower(mainCylinder)){
       main_toggle = 1;
     }
-    if (main_toggle == 1 && analogRead(mainCylinder) > 500){
+    if (main_toggle == 1 && is_upper(mainCylinder)){
       break;
     }
   }
@@ -172,12 +178,12 @@ void loop(){
 
   // Close drawer by moving C2 left.
   digitalWrite(LEFT,  HIGH);
-  while(analogRead(secCylinder) > 500){}
+  while (is_upper(secCylinder)){}
   digitalWrite(LEFT,  LOW);
 
   // Press.
   digitalWrite(UP,  HIGH);
-  while (analogRead(mainCylinder) > 500){}
+  while (is_upper(mainCylinder)){}
   digitalWrite(UP,  LOW);
 
   // Maintain pressure for 250 ms.
@@ -190,12 +196,12 @@ void loop(){
 
   // Open drawer by moving C2 left.
   digitalWrite(LEFT,  HIGH);
-  while(analogRead(secCylinder) < 500){}
+  while (is_lower(secCylinder)){}
   digitalWrite(LEFT,  LOW);
 
   // Eject.
   digitalWrite(UP,  HIGH);
-  while (analogRead(mainCylinder) < 500){}
+  while (is_lower(mainCylinder)){}
   digitalWrite(UP,  LOW);
 }
 
