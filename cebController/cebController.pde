@@ -180,6 +180,9 @@ void loop(){
   while (analogRead(mainCylinder) > 500){}
   digitalWrite(UP,  LOW);
 
+  // Maintain pressure for 250 ms.
+  delay(250);
+
   // Release.
   digitalWrite(DOWN,  HIGH);
   delay(motion_time / 32);
