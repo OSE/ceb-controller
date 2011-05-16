@@ -67,37 +67,31 @@ void setup(){
   digitalWrite(LEFT, LOW);
 
   // 3. Zero main cylinder.
-  while (analogRead(mainCylinder) < 500){
-    digitalWrite(DOWN, HIGH);
-  }
+  digitalWrite(DOWN, HIGH);
+  while (analogRead(mainCylinder) < 500){}
   digitalWrite(DOWN, LOW);
 
   // 4. Zero secondary cylinder.
-  while(analogRead(secCylinder) < 500){
-    digitalWrite(LEFT, HIGH);
-  }
+  digitalWrite(LEFT, HIGH);
+  while(analogRead(secCylinder) < 500){}
   digitalWrite(LEFT, LOW);
 
   // 5. Eject soil from chamber with main cylinder. (Go up to mid,
   // then go up to top.)
-  while (analogRead(mainCylinder) > 500){
-    digitalWrite(UP,  HIGH);
-  }
-  while (analogRead(mainCylinder) < 500){
-  }
+  digitalWrite(UP,  HIGH);
+  while (analogRead(mainCylinder) > 500){}
+  while (analogRead(mainCylinder) < 500){}
   digitalWrite(UP,  LOW);
 
   // 6. Push soil out of way with secondary cylinder by moving right
   // and stop in closed compression chamber position.
-  while(analogRead(secCylinder) > 500){
-    digitalWrite(RIGHT,  HIGH);
-  }
+  digitalWrite(RIGHT,  HIGH);
+  while(analogRead(secCylinder) > 500){}
   digitalWrite(RIGHT,  LOW);
 
   // 7. Initialize secondary cylinder.
-  while(analogRead(secCylinder) < 500){
-    digitalWrite(LEFT,  HIGH);
-  }
+  digitalWrite(LEFT,  HIGH);
+  while(analogRead(secCylinder) < 500){}
   digitalWrite(LEFT,  LOW);
 
   // 8. Calibrate main cylinder (move from top to bottom and measure T in 2 stages)
@@ -114,9 +108,8 @@ void setup(){
   digitalWrite(DOWN,  LOW);
 
   // 10. Move main cylinder to terminal position.
-  while (analogRead(mainCylinder) > 500){
-    digitalWrite(UP,  HIGH);
-  }
+  digitalWrite(UP,  HIGH);
+  while (analogRead(mainCylinder) > 500){}
   while (analogRead(mainCylinder) < 500){}
   digitalWrite(UP,  LOW);
 
@@ -178,15 +171,13 @@ void loop(){
   delay(200); // Last nuggets drop. Soil loading cycle complete.
 
   // Close drawer by moving C2 left.
-  while(analogRead(secCylinder) > 500){
-    digitalWrite(LEFT,  HIGH);
-  }
+  digitalWrite(LEFT,  HIGH);
+  while(analogRead(secCylinder) > 500){}
   digitalWrite(LEFT,  LOW);
 
   // Press.
-  while (analogRead(mainCylinder) > 500){
-    digitalWrite(UP,  HIGH);
-  }
+  digitalWrite(UP,  HIGH);
+  while (analogRead(mainCylinder) > 500){}
   digitalWrite(UP,  LOW);
 
   // Release.
@@ -195,15 +186,13 @@ void loop(){
   digitalWrite(DOWN,  LOW);
 
   // Open drawer by moving C2 left.
-  while(analogRead(secCylinder) < 500){
-    digitalWrite(LEFT,  HIGH);
-  }
+  digitalWrite(LEFT,  HIGH);
+  while(analogRead(secCylinder) < 500){}
   digitalWrite(LEFT,  LOW);
 
   // Eject.
-  while (analogRead(mainCylinder) < 500){
-    digitalWrite(UP,  HIGH);
-  }
+  digitalWrite(UP,  HIGH);
+  while (analogRead(mainCylinder) < 500){}
   digitalWrite(UP,  LOW);
 }
 
