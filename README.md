@@ -7,8 +7,6 @@ TODO:
 
 * Proof read the schematic and board layout
 * Make some minor tweaks to board layout
-  * move P1 North
-  * move P1 + PSU + P2 West
   * move T1 West
   * check for routing bugs
   * double check on component sizes
