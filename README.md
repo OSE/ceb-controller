@@ -7,6 +7,6 @@ TODO:
 
 * Proof read the schematic and board layout
 * Make some minor tweaks to board layout
-  * double check on component sizes
+
 * Add source code to repo
 * update source to reflect new schematic/board
