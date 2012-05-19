@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 19 May 2012 12:16:53 AM EDT
+EESchema Schematic File Version 2  date Sat 19 May 2012 03:22:55 PM EDT
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -57,29 +57,20 @@ $EndComp
 $Comp
 L 7805 U1
 U 1 1 4FB1382A
-P 8300 1350
-F 0 "U1" H 8450 1155 60  0000 C CNN
-F 1 "7805" H 8300 1550 60  0000 C CNN
-	1    8300 1350
+P 7900 1350
+F 0 "U1" H 8050 1155 60  0000 C CNN
+F 1 "7805" H 7900 1550 60  0000 C CNN
+	1    7900 1350
 	-1   0    0    -1  
 $EndComp
 $Comp
 L C C1
 U 1 1 4FB13890
-P 7550 1500
-F 0 "C1" H 7600 1600 50  0000 L CNN
-F 1 "220uF" H 7600 1400 50  0000 L CNN
-	1    7550 1500
+P 7150 1500
+F 0 "C1" H 7200 1600 50  0000 L CNN
+F 1 "220uF" H 7200 1400 50  0000 L CNN
+	1    7150 1500
 	1    0    0    -1  
-$EndComp
-$Comp
-L DIODE D1
-U 1 1 4FB138DE
-P 7200 1300
-F 0 "D1" H 7200 1400 40  0000 C CNN
-F 1 "1N5817" H 7200 1200 40  0000 C CNN
-	1    7200 1300
-	-1   0    0    -1  
 $EndComp
 $Comp
 L CONN_4 P2
@@ -178,7 +169,7 @@ P 2800 1500
 F 0 "D2" H 2800 1600 50  0000 C CNN
 F 1 "LED" H 2800 1400 50  0000 C CNN
 	1    2800 1500
-	0    -1   1    0   
+	0    1    -1   0   
 $EndComp
 $Comp
 L CONN_5 P3
@@ -241,7 +232,7 @@ P 2800 2350
 F 0 "D4" H 2800 2450 50  0000 C CNN
 F 1 "LED" H 2800 2250 50  0000 C CNN
 	1    2800 2350
-	0    -1   1    0   
+	0    1    -1   0   
 $EndComp
 $Comp
 L +12V #PWR02
@@ -295,7 +286,7 @@ P 2800 3200
 F 0 "D6" H 2800 3300 50  0000 C CNN
 F 1 "LED" H 2800 3100 50  0000 C CNN
 	1    2800 3200
-	0    -1   1    0   
+	0    1    -1   0   
 $EndComp
 $Comp
 L +12V #PWR03
@@ -349,7 +340,7 @@ P 2800 4100
 F 0 "D8" H 2800 4200 50  0000 C CNN
 F 1 "LED" H 2800 4000 50  0000 C CNN
 	1    2800 4100
-	0    -1   1    0   
+	0    1    -1   0   
 $EndComp
 $Comp
 L +12V #PWR04
@@ -403,7 +394,7 @@ P 2800 4950
 F 0 "D10" H 2800 5050 50  0000 C CNN
 F 1 "LED" H 2800 4850 50  0000 C CNN
 	1    2800 4950
-	0    -1   1    0   
+	0    1    -1   0   
 $EndComp
 $Comp
 L +12V #PWR05
@@ -447,10 +438,10 @@ $EndComp
 $Comp
 L GND #PWR06
 U 1 1 4FB5D092
-P 7250 1800
-F 0 "#PWR06" H 7250 1800 30  0001 C CNN
-F 1 "GND" H 7250 1730 30  0001 C CNN
-	1    7250 1800
+P 6850 1800
+F 0 "#PWR06" H 6850 1800 30  0001 C CNN
+F 1 "GND" H 6850 1730 30  0001 C CNN
+	1    6850 1800
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -510,10 +501,10 @@ $EndComp
 $Comp
 L +12V #PWR013
 U 1 1 4FB5E1B6
-P 8700 1200
-F 0 "#PWR013" H 8700 1150 20  0001 C CNN
-F 1 "+12V" H 8700 1300 30  0000 C CNN
-	1    8700 1200
+P 8800 1200
+F 0 "#PWR013" H 8800 1150 20  0001 C CNN
+F 1 "+12V" H 8800 1300 30  0000 C CNN
+	1    8800 1200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -525,13 +516,20 @@ F 1 "GND" H 5700 3580 30  0001 C CNN
 	1    5700 3650
 	1    0    0    -1  
 $EndComp
+$Comp
+L DIODE D1
+U 1 1 4FB138DE
+P 8550 1300
+F 0 "D1" H 8550 1400 40  0000 C CNN
+F 1 "1N5817" H 8550 1200 40  0000 C CNN
+	1    8550 1300
+	-1   0    0    -1  
+$EndComp
 Wire Wire Line
 	4700 950  4700 1950
 Wire Wire Line
-	7400 1300 7900 1300
-Connection ~ 7550 1300
-Wire Wire Line
-	7000 1300 7000 1950
+	6600 1300 7500 1300
+Connection ~ 7150 1300
 Wire Wire Line
 	9700 950  9700 3200
 Wire Wire Line
@@ -741,11 +739,11 @@ Wire Wire Line
 Wire Wire Line
 	10050 1950 9100 1950
 Wire Wire Line
-	7250 1700 8700 1700
+	6850 1700 8750 1700
 Wire Wire Line
-	8300 1700 8300 1600
-Connection ~ 8300 1700
-Connection ~ 8300 1700
+	7900 1700 7900 1600
+Connection ~ 7900 1700
+Connection ~ 7900 1700
 Wire Wire Line
 	7050 3650 8400 3650
 Wire Wire Line
@@ -756,9 +754,9 @@ Wire Wire Line
 	6950 3850 8400 3850
 Wire Wire Line
 	10050 4050 6850 4050
-Connection ~ 7550 1700
+Connection ~ 7150 1700
 Wire Wire Line
-	7250 1700 7250 1800
+	6850 1700 6850 1800
 Wire Wire Line
 	6500 1950 8800 1950
 Wire Wire Line
@@ -766,13 +764,9 @@ Wire Wire Line
 Wire Wire Line
 	8800 1650 9100 1650
 Wire Wire Line
-	9100 1550 8700 1550
+	9100 1550 8750 1550
 Wire Wire Line
-	8700 1550 8700 1700
-Wire Wire Line
-	8700 1450 9100 1450
-Connection ~ 8700 1300
-Connection ~ 7000 1950
+	8750 1550 8750 1700
 Connection ~ 9700 3050
 Wire Wire Line
 	3000 5150 3000 5050
@@ -795,8 +789,6 @@ Wire Wire Line
 Wire Wire Line
 	3000 1700 3000 1600
 Wire Wire Line
-	8700 1200 8700 1450
-Wire Wire Line
 	6750 4850 6750 2650
 Wire Wire Line
 	6750 2650 6500 2650
@@ -818,4 +810,18 @@ Wire Wire Line
 	4500 2450 5000 2450
 Wire Wire Line
 	5700 3500 5700 3650
+Wire Wire Line
+	6600 1950 6600 1300
+Connection ~ 6600 1950
+Connection ~ 6600 1950
+Wire Wire Line
+	8300 1300 8350 1300
+Wire Wire Line
+	8800 1450 9100 1450
+Wire Wire Line
+	8800 1200 8800 1450
+Wire Wire Line
+	8800 1300 8750 1300
+Connection ~ 8800 1300
+Connection ~ 8800 1300
 $EndSCHEMATC
