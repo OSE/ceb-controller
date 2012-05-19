@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 19 May 2012 03:22:55 PM EDT
+EESchema Schematic File Version 2  date Sat 19 May 2012 03:29:03 PM EDT
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -160,7 +160,7 @@ P 2300 1500
 F 0 "D3" H 2300 1600 40  0000 C CNN
 F 1 "CDBM120-G" H 2300 1400 40  0000 C CNN
 	1    2300 1500
-	0    -1   -1   0   
+	0    1    1    0   
 $EndComp
 $Comp
 L LED D2
@@ -223,7 +223,7 @@ P 2300 2350
 F 0 "D5" H 2300 2450 40  0000 C CNN
 F 1 "CDBM120-G" H 2300 2250 40  0000 C CNN
 	1    2300 2350
-	0    -1   -1   0   
+	0    1    1    0   
 $EndComp
 $Comp
 L LED D4
@@ -277,7 +277,7 @@ P 2300 3200
 F 0 "D7" H 2300 3300 40  0000 C CNN
 F 1 "CDBM120-G" H 2300 3100 40  0000 C CNN
 	1    2300 3200
-	0    -1   -1   0   
+	0    1    1    0   
 $EndComp
 $Comp
 L LED D6
@@ -331,7 +331,7 @@ P 2300 4100
 F 0 "D9" H 2300 4200 40  0000 C CNN
 F 1 "CDBM120-G" H 2300 4000 40  0000 C CNN
 	1    2300 4100
-	0    -1   -1   0   
+	0    1    1    0   
 $EndComp
 $Comp
 L LED D8
@@ -385,7 +385,7 @@ P 2300 4950
 F 0 "D11" H 2300 5050 40  0000 C CNN
 F 1 "CDBM120-G" H 2300 4850 40  0000 C CNN
 	1    2300 4950
-	0    -1   -1   0   
+	0    1    1    0   
 $EndComp
 $Comp
 L LED D10

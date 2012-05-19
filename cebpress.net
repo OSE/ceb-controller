@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  Sat 19 May 2012 03:23:00 PM EDT
+# EESchema Netlist Version 1.1 created  Sat 19 May 2012 03:29:07 PM EDT
 (
  ( /4FB13769 $noname  P1 Power/Sensors {Lib=CONN_6}
   (    1 +12V )
@@ -86,8 +86,8 @@
   (    2 N-000015 )
  )
  ( /4FB14AD7 $noname  D3 CDBM120-G {Lib=DIODE}
-  (    1 +12V )
-  (    2 N-000006 )
+  (    1 N-000006 )
+  (    2 +12V )
  )
  ( /4FB14AE6 $noname  D2 LED {Lib=LED}
   (    1 N-000006 )
@@ -114,8 +114,8 @@
   (    2 N-000004 )
  )
  ( /4FB15F66 $noname  D5 CDBM120-G {Lib=DIODE}
-  (    1 +12V )
-  (    2 N-000003 )
+  (    1 N-000003 )
+  (    2 +12V )
  )
  ( /4FB15F6C $noname  D4 LED {Lib=LED}
   (    1 N-000003 )
@@ -135,8 +135,8 @@
   (    2 N-000001 )
  )
  ( /4FB15FA0 $noname  D7 CDBM120-G {Lib=DIODE}
-  (    1 +12V )
-  (    2 N-000010 )
+  (    1 N-000010 )
+  (    2 +12V )
  )
  ( /4FB15FA6 $noname  D6 LED {Lib=LED}
   (    1 N-000010 )
@@ -156,8 +156,8 @@
   (    2 N-000007 )
  )
  ( /4FB15FDA $noname  D9 CDBM120-G {Lib=DIODE}
-  (    1 +12V )
-  (    2 N-000008 )
+  (    1 N-000008 )
+  (    2 +12V )
  )
  ( /4FB15FE0 $noname  D8 LED {Lib=LED}
   (    1 N-000008 )
@@ -177,8 +177,8 @@
   (    2 N-000029 )
  )
  ( /4FB16014 $noname  D11 CDBM120-G {Lib=DIODE}
-  (    1 +12V )
-  (    2 N-000028 )
+  (    1 N-000028 )
+  (    2 +12V )
  )
  ( /4FB1601A $noname  D10 LED {Lib=LED}
   (    1 N-000028 )
@@ -361,14 +361,14 @@ $endfootprintlist
 }
 { Pin List by Nets
 Net 1 "" ""
- R6 2
  D6 2
+ R6 2
 Net 2 "" ""
  Q2 G
  R3 2
 Net 3 "" ""
  D4 1
- D5 2
+ D5 1
  P3 4
  Q2 D
 Net 4 "" ""
@@ -381,14 +381,14 @@ Net 6 "" ""
  Q1 D
  P3 5
  D2 1
- D3 2
+ D3 1
 Net 7 "" ""
  D8 2
  R8 2
 Net 8 "" ""
  P3 2
  D8 1
- D9 2
+ D9 1
  Q4 D
 Net 9 "" ""
  R5 2
@@ -396,65 +396,65 @@ Net 9 "" ""
 Net 10 "" ""
  P3 3
  D6 1
- D7 2
+ D7 1
  Q3 D
 Net 11 "" ""
  T1 19
  R11 1
 Net 12 "" ""
- SW3 1
  T1 21
+ SW3 1
  P2 3
 Net 13 "" ""
- P2 4
- T1 20
  SW4 1
+ T1 20
+ P2 4
 Net 14 "+12V" "+12V"
- D5 1
  R4 1
+ D11 2
+ D1 1
  R2 1
+ D3 2
  R8 1
- D9 1
+ D9 2
  P1 1
  R10 1
+ D5 2
  R6 1
- D7 1
- D3 1
- D1 1
- D11 1
+ D7 2
 Net 15 "" ""
- R2 2
  D2 2
+ R2 2
 Net 16 "" ""
- P1 6
  T1 15
+ P1 6
 Net 17 "" ""
- R12 2
  P1 5
+ R12 2
 Net 18 "" ""
  T1 18
  R12 1
 Net 19 "" ""
- R11 2
  P1 4
+ R11 2
 Net 20 "GND" "GND"
+ Q1 S
+ SW4 2
  T1 1
- Q3 S
  P1 2
  U1 GND
- SW1 2
- SW2 2
- SW4 2
  SW3 2
  Q4 S
- Q2 S
  Q5 S
+ Q3 S
  C1 2
+ SW2 2
+ Q2 S
+ SW1 2
  T1 27
- Q1 S
 Net 21 "" ""
- R9 1
  T1 17
+ R9 1
 Net 22 "" ""
  U1 VI
  D1 2
@@ -465,8 +465,8 @@ Net 24 "" ""
  R3 1
  T1 7
 Net 25 "" ""
- R1 1
  T1 11
+ R1 1
 Net 26 "" ""
  T1 16
  R7 1
@@ -475,27 +475,27 @@ Net 27 "" ""
  Q5 G
 Net 28 "" ""
  Q5 D
+ D11 1
  D10 1
  P3 1
- D11 2
 Net 29 "" ""
- D10 2
  R10 2
+ D10 2
 Net 30 "" ""
  Q4 G
  R7 2
 Net 36 "" ""
- SW1 1
- P2 1
  T1 23
+ P2 1
+ SW1 1
 Net 38 "" ""
  T1 22
  SW2 1
  P2 2
 Net 39 "" ""
- P1 3
- T1 24
  C1 1
+ P1 3
  U1 VO
+ T1 24
 }
 #End
