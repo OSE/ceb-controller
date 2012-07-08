@@ -31,7 +31,7 @@ LibName9=dip_sockets
 LibName10=pga_sockets
 LibName11=valves
 LibName12=TEENSY2
-LibDir=/home/dwiel/kicad
+LibDir=./TEENSY2
 [eeschema]
 version=1
 LibDir=
@@ -74,7 +74,7 @@ LibName27=opto
 LibName28=atmel
 LibName29=contrib
 LibName30=valves
-LibName31=/home/dwiel/kicad/TEENSYPP2
+LibName31=./TEENSY2/TEENSYPP2
 [cvpcb]
 version=1
 NetIExt=net
