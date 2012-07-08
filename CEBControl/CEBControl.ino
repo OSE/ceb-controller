@@ -23,20 +23,20 @@ long releasetime;
 void setup() {
   Serial.begin(9600);
   
-  // Primary Analog Sensor Signal Receiver
+  // Primary Analog Sensor
   pinMode(14,INPUT);
-  // Secondary Analog Sensor Signal Receiver
+  // Secondary Analog Sensor
   pinMode(15,INPUT);
 
-  // Primary Digital Move Down Switch
+  // Primary Digital Move Down Output
   pinMode(3,OUTPUT);
-  // Primary Digital Move Up Switch
+  // Primary Digital Move Up Output
   pinMode(6,OUTPUT);
-  // Secondary Digital Move Left Switch
+  // Secondary Digital Move Left Output
   pinMode(9,OUTPUT);
-  // Secondary Digital Move Right Switch
+  // Secondary Digital Move Right Output
   pinMode(10,OUTPUT);
-  // Shaker Digital Move Switch
+  // Shaker Digital Move Output
   pinMode(11,OUTPUT);
   
   counter1=0;
@@ -53,7 +53,6 @@ void setup() {
   digitalWrite(3, HIGH);
   delay(1000);
   digitalWrite(3, LOW);
-  
   
   //Move secondary cylinder right for 0.5 seconds
   Serial.println("Secondary Moving Right for Delay");
