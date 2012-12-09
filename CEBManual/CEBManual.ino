@@ -209,7 +209,7 @@ boolean _delay(int t) {
 }
 
 boolean delay_or_pressure(int t) {
-    return _delay(t) || until_sensor(pressure_pin);
+    return _delay(t) || until_sensor(sensor_pressure);
 }
 
 int auto_loop_state = 0;
