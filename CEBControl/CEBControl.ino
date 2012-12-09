@@ -16,6 +16,7 @@ float timingratio;
 long compressiontime;
 long releasetime;
 
+// which pin does what
 const int sensor_primary = 14;
 const int sensor_secondary = 15;
 const int primary_down = 3;

@@ -1,4 +1,4 @@
-eeschema (2011-nov-30)-testing  >> Creation date: Thu 17 May 2012 09:51:27 AM EDT
+eeschema (2011-nov-30)-testing  >> Creation date: Wed 18 Jul 2012 10:35:17 PM EDT
 
 #Cmp ( order = Reference )
 | C1         220uF       
@@ -44,19 +44,19 @@ eeschema (2011-nov-30)-testing  >> Creation date: Thu 17 May 2012 09:51:27 AM ED
 #Cmp ( order = Value )
 | 220uF        C1        
 | 1N5817       D1        
-| CDBM120-G    D3        
-| CDBM120-G    D5        
-| CDBM120-G    D7        
-| CDBM120-G    D9        
-| CDBM120-G    D11       
 | LED          D2        
+| CDBM120-G    D3        
 | LED          D4        
+| CDBM120-G    D5        
 | LED          D6        
+| CDBM120-G    D7        
 | LED          D8        
+| CDBM120-G    D9        
 | LED          D10       
+| CDBM120-G    D11       
+| Power/Sensors P1        
 | Buttons      P2        
 | PNEUMATICS OUT P3        
-| Power/Sensors P1        
 | IRL530NPBF   Q1        
 | RFD16N05L    Q2        
 | RFD16N05L    Q3        
@@ -65,15 +65,15 @@ eeschema (2011-nov-30)-testing  >> Creation date: Thu 17 May 2012 09:51:27 AM ED
 | 499          R2        
 | 499          R4        
 | 499          R6        
-| 499          R10       
 | 499          R8        
-| 10k          R12       
+| 499          R10       
 | 10k          R11       
+| 10k          R12       
 | 44.9K        R1        
-| 44.9K        R9        
-| 44.9K        R7        
-| 44.9K        R5        
 | 44.9K        R3        
+| 44.9K        R5        
+| 44.9K        R7        
+| 44.9K        R9        
 | Left         SW1       
 | Right        SW2       
 | Up           SW3       
