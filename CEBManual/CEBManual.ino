@@ -30,6 +30,7 @@ void setup() {
 
   pinMode(sensor_primary,   INPUT);
   pinMode(sensor_secondary, INPUT);
+  pinMode(sensor_pressure,  INPUT);
 
   Serial.begin(115200);
 }
@@ -157,19 +158,20 @@ boolean move_until(int pin, fnptr until, int params){
   }
 }
 
-const int threshold = 80;
 int sensor_state = 0;
+
+boolean until_switch(int sensor_pin) {
+  if(!digitalRead(sensor_pin)) {
+    sensor_state = 0;
+    return true;
+  }
+  return false;
+}
+
+const int threshold = 80;
 boolean until_sensor(int sensor_pin) {
   Serial.println("until sensor");
   Serial.println(sensor_state);
-  
-  // if the switch is pressed, 
-  if(sensor_pin == sensor_primary) {
-    if(!digitalRead(sensor_primary_switch)) {
-      sensor_state = 0;
-      return true;
-    }
-  }
   
   switch(sensor_state) {
     case 0:
@@ -208,8 +210,15 @@ boolean _delay(int t) {
   }
 }
 
+boolean until_pressure_switch(int sensor_pin) {
+  if(analogRead(sensor_pin) > 512) {
+    sensor_state = 0;
+    return true;
+  }
+  return false;
+}
 boolean delay_or_pressure(int t) {
-    return _delay(t) || until_sensor(sensor_pressure);
+    return _delay(t) || until_pressure_switch(sensor_pressure);
 }
 
 int auto_loop_state = 0;
@@ -229,7 +238,7 @@ void auto_loop() {
     case 1:
       // lower primary cylinder to sensor
       digitalWrite(shaker, HIGH);
-      auto_loop_state += move_until(primary_down, &until_sensor, sensor_primary);
+      auto_loop_state += move_until(primary_down, &until_switch, sensor_primary_switch);
       break;
     case 2:
       // wait for chamber to fill
