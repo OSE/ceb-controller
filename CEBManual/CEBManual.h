@@ -34,7 +34,7 @@ const int mode_pin         = 7;
 const int sensor_primary   = A0;
 const int sensor_secondary = A1;
 const int sensor_primary_switch = 0;
-const int sensor_pressure  = 14;
+const int sensor_pressure  = A5;
 
 // output pins
 const int primary_down    = 2;
