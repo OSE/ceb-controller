@@ -3,7 +3,7 @@
 Arduino software to power an open source, high-performance Compresssed Earth Block press.
 
 Compresssed Earth Block building is the highest quality natural building method.
-See the [CEB Intro Page](http://openfarmtech.org/wiki/CEB_intro) for more introductory
+See the [CEB Intro Page](http://opensourceecology.org/wiki/CEB_Press) for more introductory
 information about compressed earth blocks.
 
 ## How to compile (on Ubuntu Linux)
