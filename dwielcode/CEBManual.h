@@ -1,0 +1,1 @@
+typedef (*fnptr)(int);
