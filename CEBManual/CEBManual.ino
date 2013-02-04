@@ -86,16 +86,16 @@ unsigned int shaker_timer = 0;
 unsigned int last_shaker_toggle_state = 0;
 void manual_loop() {
   // blinker
-  if(i < blink_speed) {
-    digitalWrite(blink_pin, HIGH);
-  } else {
-    digitalWrite(blink_pin, LOW);
-  }
-
-  if(i >= blink_speed*2) {
-    i = 0;
-  } 
-  i += 1;
+  //if(i < blink_speed) {
+  //  digitalWrite(blink_pin, HIGH);
+  //} else {
+  //  digitalWrite(blink_pin, LOW);
+  //}
+  //
+  //if(i >= blink_speed*2) {
+  //  i = 0;
+  //} 
+  //i += 1;
 
   /*
   // secondary
@@ -108,6 +108,11 @@ void manual_loop() {
     digitalWrite(secondary_right, LOW);
   }
   */
+  if(until_pressure_switch(sensor_pressure)) {
+    digitalWrite(blink_pin, HIGH);
+  } else {
+    digitalWrite(blink_pin, LOW);
+  }
         
   digitalWrite(primary_down,    !digitalRead(manual_down));
   digitalWrite(primary_up,      !digitalRead(manual_up));
