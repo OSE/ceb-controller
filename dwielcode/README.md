@@ -1,10 +1,14 @@
-ose-cebpress-controller-board
-=============================
+This is the code for dwiel's version of the CEB press control code.  It is not
+yet merged into the official version, but will be once it is a bit more stable.
 
-Source files for the Open Source Ecology CEB Press Controller Board
+It provides a pause button as well as a pressure relief sensor which will stop
+all hydraulics if an over pressure sitation is detected.
+
+More testing will be done this spring/summer with my CEB Press to iron
+everything out.
 
 TODO:
 
-* Proof read the schematic and board layout
-* Add source code to repo
-* update source to reflect new schematic/board
+* update board layout with new board
+* add header for FeF CEB Press pinout
+* more testing of code
