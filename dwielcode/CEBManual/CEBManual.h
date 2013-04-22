@@ -29,11 +29,12 @@ const int manual_shaker = 13;
 const int blink_pin        = 13;
 const int pause_pin        = 1;
 const int mode_pin         = 7;
+const boolean invert_mode_pin = true;
 
 // sensor pins
 const int sensor_primary   = A0;
 const int sensor_secondary = A1;
-const int sensor_primary_switch = 0;
+const int sensor_primary_switch = 1; // UNKNOWN
 const int sensor_pressure  = A5;
 
 // output pins
@@ -44,10 +45,10 @@ const int secondary_right = 5;
 const int shaker          = 6;
 
 // button pins
-const int manual_down   = 8;
-const int manual_up     = 9;
-const int manual_left   = 10;
-const int manual_right  = 11;
-const int manual_shaker = 12;
+const int manual_down   = 9;
+const int manual_up     = 10;
+const int manual_left   = 11;
+const int manual_right  = 12;
+const int manual_shaker = 0;
 #endif
 
