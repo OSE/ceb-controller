@@ -185,11 +185,13 @@ void semiautomatic_loop() {
       break;
     case 3:
       if(until_sensor(sensor_primary)) {
+        digitalWrite(primary_up, LOW);
         semiautomatic_loop_state = 0;
       }
       break;
     case 4:
       if(until_sensor(sensor_primary)) {
+        digitalWrite(primary_down, LOW);
         semiautomatic_loop_state = 0;
       }
       break;
@@ -199,6 +201,7 @@ void semiautomatic_loop() {
   
   // too high pressure always go back to 0 off state
   if(digitalRead(sensor_primary_switch)) {
+    all_off();
     semiautomatic_loop_state = 0;
   }
 }
