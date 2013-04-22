@@ -3,6 +3,11 @@
 // Code for initialization and brick production loop with motion of the
 //   primary cylinder, secondary cylinder, and shaker motor
 
+// TODO: combine movements in automatic code that can happen simultaneously (if
+//   that still works with pressure sensor movement ...
+// TODO: reduce time between high pressure sensed and pressure released
+// TODO: detect constant high pressure or high pressure too soon
+
 #include "CEBManual.h"
 
 // can't use serial line with pins 0 or 1 ...
@@ -45,12 +50,17 @@ void loop() {
   
   // determine which mode we are in
   if(digitalRead(mode_pin) ^ invert_mode_pin) {
+    auto_loop_state = 0;
+    reset_state = 0;
+    
     // manual_loop();
     semiautomatic_loop();
     if(serial) {
       //Serial.println("manual");
     }
   } else {
+    semiautomatic_loop_state = 0;
+    
     auto_loop();
     if(serial) {
       //Serial.println("auto");
@@ -456,6 +466,7 @@ void auto_loop() {
       
       // turn on shaker
       //digitalWrite(shaker, shaker_on);
+      // TODO: low or no delay here
       delay(500);
       auto_loop_state += 1;
       break;
@@ -463,6 +474,7 @@ void auto_loop() {
       // lower primary cylinder to sensor
       //digitalWrite(shaker, shaker_on);
       // TODO : wait for primary magnet
+      // can happen along side step 2&3
       auto_loop_state += move_until(primary_down, &never, 0);
       break;
     case 2:
