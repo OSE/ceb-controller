@@ -26,16 +26,18 @@ const int manual_shaker = 13;
 #endif
 
 #ifdef DIECIMILA
-const int blink_pin        = 13;
-const int pause_pin        = 1;
+const boolean invert_output = true;
+
+// const int blink_pin        = ;
+const int pause_pin        = 12;
 const int mode_pin         = 7;
 const boolean invert_mode_pin = true;
 
 // sensor pins
-const int sensor_primary   = A0;
-const int sensor_secondary = A1;
-const int sensor_primary_switch = 1; // UNKNOWN
-const int sensor_pressure  = A5;
+const int sensor_primary   = A4;
+const int sensor_secondary = A5;
+const int sensor_pressure  = A3;
+const int knob_primary     = A2;
 
 // output pins
 const int primary_down    = 2;
@@ -45,10 +47,10 @@ const int secondary_right = 5;
 const int shaker          = 6;
 
 // button pins
-const int manual_down   = 9;
-const int manual_up     = 10;
-const int manual_left   = 11;
-const int manual_right  = 12;
-const int manual_shaker = 0;
+const int manual_down   = 8;
+const int manual_up     = 9;
+const int manual_left   = 10;
+const int manual_right  = 11;
+const int manual_shaker = 13;
 #endif
 
