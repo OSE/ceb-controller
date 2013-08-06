@@ -69,6 +69,7 @@ void loop_manual() {
 }
 
 void manual() {
+    // a manual mode for directly controlling the cylinders
     _digitalWrite(primary_up,      !digitalRead(manual_up));
     _digitalWrite(primary_down,    !digitalRead(manual_down));
     _digitalWrite(secondary_left,  !digitalRead(manual_left));
@@ -77,10 +78,6 @@ void manual() {
 }
 
 void loop() {
-  //manual();
-  //sreturn;
-  // check_pause();
-
   // determine which mode we are in
   if(digitalRead(mode_pin) ^ invert_mode_pin) {
     auto_loop_state = 0;
@@ -136,6 +133,7 @@ void manual_control(int output_pin, int input_pin) {
 }
 
 void all_off() {
+  // a helper which easily ensures that all output pins are low
   _digitalWrite(secondary_left,  LOW);
   _digitalWrite(secondary_right, LOW);
   _digitalWrite(primary_up,      LOW);
@@ -145,6 +143,11 @@ void all_off() {
 
 unsigned long last_sensor_pressure = 0;
 void semiautomatic_loop() {
+  // this loop is semiautomatic in that pressing a button momentarily will
+  // move the cylinder even after letting go of the button, until a magent 
+  // sensor or pressure sensor is triggered.  This is no longer as useful as
+  // it used to be since I no longer use magnetic sensors
+  
   if(serial) {
     //Serial.print("sensor_primary: ");
     //Serial.println(analogRead(sensor_primary));
@@ -255,30 +258,8 @@ unsigned int shaker_state = 0;
 unsigned int shaker_timer = 0;
 unsigned int last_shaker_toggle_state = 0;
 void manual_loop() {
-  if(serial) {
-    /*Serial.print("down: ");
-    Serial.println(digitalRead(manual_down));
+  // this is an old manual loop which includes a toggle for the shaker
   
-    Serial.print("up: ");
-    Serial.println(digitalRead(manual_up));
-  
-    Serial.print("left: ");
-    Serial.println(digitalRead(manual_left));
-  
-    Serial.print("right: ");
-    Serial.println(digitalRead(manual_right));
-  
-    Serial.print("shaker: ");
-    Serial.println(digitalRead(manual_shaker));
-    */
-    
-    //Serial.print("sensor_pressure: ");
-    //Serial.println(digitalRead(sensor_pressure));
-    /*
-    Serial.print("sensor_pressure: ");
-    Serial.println(digitalRead(sensor_pressure));*/
-  }
-
   _digitalWrite(primary_down,    !digitalRead(manual_down));
   _digitalWrite(primary_up,      !digitalRead(manual_up));
   _digitalWrite(secondary_left,  !digitalRead(manual_left));
@@ -484,14 +465,19 @@ unsigned long begin_down = 0;
 unsigned long end_down = 0;
 double knob_primary_setting = 0;
 void auto_loop() {
-  // wait for press to be moved to pre-loading position - secondary extended, 
-  // primary extended
-  // in order to support a pause button, save the step that we are on 
+  // This auto_loop is designed as a state machine which gives us something
+  // like multithreading on the arduino, which allows us to implement a pause
+  // button.
+  // Every step will be considered complete if the pressure sensor
+  // detects high pressure.
+
   if(serial) {
-    // Serial.println("auto_state");
+    Serial.print("auto_state");
     Serial.println(auto_loop_state);
   }
   
+  // wait for press to be moved to pre-loading position - secondary extended, 
+  // primary extended
   if(!reset()) {
     return;
   }
@@ -506,12 +492,12 @@ void auto_loop() {
       
       // turn on shaker
       //_digitalWrite(shaker, shaker_on);
-      // TODO: low or no delay here
-      // delay(500);
       auto_loop_state += 1;
 
       // if we make it all of the way through the loop in less than 100ms
       // there is probably something wrong
+      // I have disabled this for now since it was causing more problems than
+      // it was helping
       //now = millis();
       //if(now - loop_start < 100) {
       //  auto_loop_state = 99;
@@ -524,38 +510,33 @@ void auto_loop() {
     case 1:
       // lower primary cylinder to sensor
       //_digitalWrite(shaker, shaker_on);
-      // TODO : wait for primary magnet
-      // can happen along side step 9, though only after a small delay ...
       auto_loop_state += move_until(primary_down, &never, 0, true);
       break;
     case 2:
-      //auto_loop_state += _delay(1000);  
       end_down = millis();
       auto_loop_state += 1;
-    case 3:
-      //Serial.println(end_down - begin_down);
-      //if(end_down - begin_down < 300) {
-      //  auto_loop_state = 99;
-      //  return;
-      //}
+    case 4:
       // with a sensor, we could do away with this extra time spent going
       // all of the way down, and then back up again.
-      
-      // knob_primary_setting = 0.39;
       
       // this will need tweaked depending on your knob.  This works for
       // log fade.  you could remove the pow to make this work well
       // on a normal linear fade.
+      // knob_primary_setting should be a float between 0 and 1, where 0 means
+      // the chamber should completely fill the chamber with soil and 1 means
+      // the chamber should be completely empty
       knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
-      // Serial.println(knob_primary_setting);
       
       auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
       break;
-    case 4:
+    case 3:
       // retract secondary cylinder to center via sensor (to become ready for
       // compression)
       //_digitalWrite(shaker, shaker_on);
-      //auto_loop_state += move_until(secondary_left, &until_sensor, sensor_secondary, true);
+      // you might need to change 0.38 to something else depending on the exact
+      // construction of your press.  It might be worth making this a knob
+      // too, so that arduinos can be preloaded with the same firmware for
+      // every press
       auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.38, true);
       break;
     case 5:
@@ -570,7 +551,6 @@ void auto_loop() {
       // for now, just wait for pressure (might want simple delay here instead
       // if actually compressing the brick never gets to sensor pressure)
       auto_loop_state += move_until(primary_up, &never, 0, true);
-      //auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * 1.5, false);
       break;
     case 7:
       // reduce pressure on block
@@ -597,20 +577,14 @@ void auto_loop() {
       //_digitalWrite(shaker, LOW);
       // NOTE: could technically start drawing the primary cylinder down
       // at this point too.  With all set points on timers though, we can't
-      // do that.  I'm also not sure if it would actually save time since there
-      // is only so many GPM the engine can deliver
+      // do that since it would mess with calibration
       auto_loop_state += move_until(secondary_right, &never, 0, true);
       break;
     case 11:
       end_right = millis();
-      //Serial.println(end_right - begin_right);
-      //if(end_right - begin_right < 300) {
-      //  auto_loop_state = 99;
-      //  return;
-      //}
       auto_loop_state += 1;
     case 99:
-      // an error has occurred, do nothing
+      // an error has occurred, do nothing forever (until power cycled)
       all_off();
       break;
     default:
