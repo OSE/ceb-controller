@@ -70,6 +70,12 @@ void loop_manual() {
 
 void manual() {
     // a manual mode for directly controlling the cylinders
+    Serial.print(!digitalRead(manual_up));
+    Serial.print(!digitalRead(manual_down));
+    Serial.print(!digitalRead(manual_left));
+    Serial.print(!digitalRead(manual_right));
+    Serial.println();
+
     _digitalWrite(primary_up,      !digitalRead(manual_up));
     _digitalWrite(primary_down,    !digitalRead(manual_down));
     _digitalWrite(secondary_left,  !digitalRead(manual_left));
@@ -165,6 +171,7 @@ void semiautomatic_loop() {
   switch(semiautomatic_loop_state) {
     case 0:      
       if (!digitalRead(manual_left)) {
+        Serial.println("left");
         _digitalWrite(secondary_left,  HIGH);
         _digitalWrite(secondary_right, LOW);
         _digitalWrite(primary_up,      LOW);
@@ -172,6 +179,7 @@ void semiautomatic_loop() {
         _digitalWrite(shaker,          LOW);
         semiautomatic_loop_state = 1;
       } else if (!digitalRead(manual_right)) {
+        Serial.println("right");
         _digitalWrite(secondary_left,  LOW);
         _digitalWrite(secondary_right, HIGH);
         _digitalWrite(primary_up,      LOW);
@@ -179,6 +187,7 @@ void semiautomatic_loop() {
         _digitalWrite(shaker,          LOW);
         semiautomatic_loop_state = 2;
       } else if (!digitalRead(manual_up)) {
+        Serial.println("up");
         _digitalWrite(secondary_left,  LOW);
         _digitalWrite(secondary_right, LOW);
         _digitalWrite(primary_up,      HIGH);
@@ -186,6 +195,7 @@ void semiautomatic_loop() {
         _digitalWrite(shaker,          LOW);
         semiautomatic_loop_state = 3;
       } else if(!digitalRead(manual_down)) {
+        Serial.println("down");
         _digitalWrite(secondary_left,  LOW);
         _digitalWrite(secondary_right, LOW);
         _digitalWrite(primary_up,      LOW);
@@ -413,9 +423,10 @@ boolean reset() {
   switch(reset_state) {
     case 0:
       all_off();
-      reset_state = 1;
+      reset_state += 1;
       delay(100);
     case 1:
+      /*
       _digitalWrite(primary_down, HIGH);
       if(digitalRead(sensor_pressure)) {
         reset_state = 2;
@@ -430,27 +441,32 @@ boolean reset() {
         // wait for pressure to reset
         delay(100);
       }
+      */
+      reset_state += 1;
       break;
     case 2:
-      _digitalWrite(secondary_right, HIGH);
+      _digitalWrite(secondary_left, HIGH);
       if(digitalRead(sensor_pressure)) {
-        reset_state = 3;
-        _digitalWrite(secondary_right, LOW);
+        reset_state += 1;
+        _digitalWrite(secondary_left, LOW);
+        delay(1000);
+        begin_right = millis();
       }
       break;
     case 3:
-      begin_right = millis();
-      reset_state = 4;
-    case 4:
-      _digitalWrite(secondary_left, HIGH);
+      _digitalWrite(secondary_right, HIGH);
       if(digitalRead(sensor_pressure)) {
-        reset_state = 5;
-        _digitalWrite(secondary_left, LOW);
+        reset_state += 1;
+        _digitalWrite(secondary_right, LOW);
       }
+    case 4:
+      end_right = millis();
+      reset_state += 1;
       break;
     case 5:
-      end_right = millis();
-      reset_state = 6;
+      auto_loop_state = 4;
+      reset_state += 1;
+      break;
     case 6:
       // done resetting
       return true;
@@ -474,6 +490,7 @@ void auto_loop() {
   if(serial) {
     Serial.print("auto_state");
     Serial.println(auto_loop_state);
+    Serial.println(reset_state);
   }
   
   // wait for press to be moved to pre-loading position - secondary extended, 
@@ -526,6 +543,9 @@ void auto_loop() {
       // the chamber should completely fill the chamber with soil and 1 means
       // the chamber should be completely empty
       knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
+      Serial.println(end_down - begin_down);
+      Serial.println((end_down - begin_down) * knob_primary_setting);
+      Serial.println(knob_primary_setting);
       
       auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
       break;
