@@ -439,7 +439,7 @@ boolean reset() {
       }
       break;
     case 3:
-      //begin_right = millis();
+      begin_right = millis();
       reset_state = 4;
     case 4:
       _digitalWrite(secondary_left, HIGH);
@@ -515,7 +515,7 @@ void auto_loop() {
     case 2:
       end_down = millis();
       auto_loop_state += 1;
-    case 4:
+    case 3:
       // with a sensor, we could do away with this extra time spent going
       // all of the way down, and then back up again.
       
@@ -529,7 +529,7 @@ void auto_loop() {
       
       auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
       break;
-    case 3:
+    case 4:
       // retract secondary cylinder to center via sensor (to become ready for
       // compression)
       //_digitalWrite(shaker, shaker_on);
