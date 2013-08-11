@@ -409,13 +409,20 @@ unsigned long begin_right = 0;
 unsigned long end_right = 1000;
 
 boolean reset() {
-  // reset machine to primary all of the way down, and secondary all the way left
+  // reset machine to primary all of the way down, and secondary all the way
+  // left.  Right now the machine will eject all of the soil without
+  // compressing on reset, would be better if it compressed first, and then
+  // ejected.  In the event that there wasnt much soil in the chamber, you just
+  // get a pancake, and in the event that it was full, you get a block rather
+  // than a mess.
   switch(reset_state) {
     case 0:
       all_off();
       reset_state = 1;
       delay(100);
     case 1:
+      reset_state = 2;
+      /*
       _digitalWrite(primary_down, HIGH);
       if(digitalRead(sensor_pressure)) {
         reset_state = 2;
@@ -429,7 +436,7 @@ boolean reset() {
         
         // wait for pressure to reset
         delay(100);
-      }
+      }*/
       break;
     case 2:
       _digitalWrite(secondary_right, HIGH);
@@ -439,7 +446,7 @@ boolean reset() {
       }
       break;
     case 3:
-      //begin_right = millis();
+      begin_right = millis();
       reset_state = 4;
     case 4:
       _digitalWrite(secondary_left, HIGH);
@@ -450,9 +457,12 @@ boolean reset() {
       break;
     case 5:
       end_right = millis();
+      auto_loop_state = 3;
       reset_state = 6;
     case 6:
       // done resetting
+      // skip to move secondary cylinder to center, compression state and
+      // then make a block with whatever is in the chamber
       return true;
   }
   return false;
@@ -504,18 +514,24 @@ void auto_loop() {
       //}
       //loop_start = now;
       
-      begin_down = millis();
+      //begin_down = millis();
       
+      // TODO: this will still need tweaking!
+      //knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7) * 2;
+      
+      // auto_loop_state += move_until(primary_up, &_delay, (end_right - begin_right) * knob_primary_setting, true);      
+      auto_loop_state += move_until(primary_down, &never, 0, true);
       break;
     case 1:
       // lower primary cylinder to sensor
       //_digitalWrite(shaker, shaker_on);
-      auto_loop_state += move_until(primary_down, &never, 0, true);
+      //auto_loop_state += move_until(primary_down, &never, 0, true);
+      auto_loop_state += 1;
       break;
     case 2:
-      end_down = millis();
+      //end_down = millis();
       auto_loop_state += 1;
-    case 4:
+    case 3:
       // with a sensor, we could do away with this extra time spent going
       // all of the way down, and then back up again.
       
@@ -525,11 +541,12 @@ void auto_loop() {
       // knob_primary_setting should be a float between 0 and 1, where 0 means
       // the chamber should completely fill the chamber with soil and 1 means
       // the chamber should be completely empty
-      knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
+      //knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
       
-      auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
+      //auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
+      auto_loop_state += 1;
       break;
-    case 3:
+    case 4:
       // retract secondary cylinder to center via sensor (to become ready for
       // compression)
       //_digitalWrite(shaker, shaker_on);
@@ -537,6 +554,9 @@ void auto_loop() {
       // construction of your press.  It might be worth making this a knob
       // too, so that arduinos can be preloaded with the same firmware for
       // every press
+      Serial.println("time");
+      Serial.println(end_right);
+      Serial.println(begin_right);
       auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.38, true);
       break;
     case 5:
