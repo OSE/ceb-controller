@@ -521,17 +521,19 @@ void auto_loop() {
       //}
       //loop_start = now;
       
-      begin_down = millis();
+      //begin_down = millis();
       
       break;
     case 1:
       // lower primary cylinder to sensor
       //_digitalWrite(shaker, shaker_on);
-      auto_loop_state += move_until(primary_down, &never, 0, true);
+      //auto_loop_state += move_until(primary_down, &never, 0, true);
+      auto_loop_state += 1;
       break;
     case 2:
-      end_down = millis();
+      //end_down = millis();
       auto_loop_state += 1;
+      break;
     case 3:
       // with a sensor, we could do away with this extra time spent going
       // all of the way down, and then back up again.
@@ -544,10 +546,11 @@ void auto_loop() {
       // the chamber should be completely empty
       knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
       Serial.println(end_down - begin_down);
-      Serial.println((end_down - begin_down) * knob_primary_setting);
+      Serial.println(4200 - ((4200) * knob_primary_setting)+100);
       Serial.println(knob_primary_setting);
       
-      auto_loop_state += move_until(primary_up, &_delay, (end_down - begin_down) * knob_primary_setting, true);
+      auto_loop_state += move_until(primary_down, &_delay, 4200 - ((4200) * knob_primary_setting), true);
+      //auto_loop_state += move_until(primary_down, &_delay, 1000, true);
       break;
     case 4:
       // retract secondary cylinder to center via sensor (to become ready for
@@ -557,7 +560,7 @@ void auto_loop() {
       // construction of your press.  It might be worth making this a knob
       // too, so that arduinos can be preloaded with the same firmware for
       // every press
-      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.38, true);
+      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.34, true);
       break;
     case 5:
       // turn off shaker
