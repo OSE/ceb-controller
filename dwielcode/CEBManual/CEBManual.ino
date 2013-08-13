@@ -3,17 +3,9 @@
 // Code for initialization and brick production loop with motion of the
 //   primary cylinder, secondary cylinder, and shaker motor
 
-// TODO: install and test primary cylinder sensor
-// TODO: auger?
-
 // TODO: reintroduce and test pause button
-// TODO: replace delay_or_pressure with just pressure
-// TODO: fix naming of pressure sensor
-// TODO: combine movements in automatic code that can happen simultaneously (if
-//   that still works with pressure sensor movement ...
-//   this isn't super easy and will obfuscate the code somewhat
-//   ALSO: steps 6&7 could potentially be combined
-// TODO: remap pins 0 and 1 so that serial can be used while they are connected
+// TODO: reset actions shouldnt eject uncompressed soil
+// TODO: idea: pause if secondary cylinder hits pressure before expected (rock).  Button near pitch forker could tell the machine to move the cylinder back the way it came, and try again (to break the rock), rather than just detecting unexpected pressure and moving on.  Similar logic could happen at all steps and set the press in 'unexpected behavior pause' mode which the operator can resume from once they figure out what caused the problem.
 
 #include "CEBManual.h"
 
@@ -449,11 +441,14 @@ boolean reset() {
       if(digitalRead(sensor_pressure)) {
         reset_state += 1;
         _digitalWrite(secondary_left, LOW);
-        delay(1000);
+         // allow time for the pressure to release
+        delay(100);
         begin_right = millis();
       }
       break;
     case 3:
+      // for some reason this step was always getting skipped.  Cant figure
+      // out why the pressure is detected so soon
       _digitalWrite(secondary_right, HIGH);
       if(digitalRead(sensor_pressure)) {
         reset_state += 1;
