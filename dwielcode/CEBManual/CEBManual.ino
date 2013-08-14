@@ -475,6 +475,7 @@ unsigned long now;
 unsigned long begin_down = 0;
 unsigned long end_down = 0;
 double knob_primary_setting = 0;
+int jam_count = 0;
 void auto_loop() {
   // This auto_loop is designed as a state machine which gives us something
   // like multithreading on the arduino, which allows us to implement a pause
@@ -555,11 +556,34 @@ void auto_loop() {
       // construction of your press.  It might be worth making this a knob
       // too, so that arduinos can be preloaded with the same firmware for
       // every press
-      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.34, true);
+      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.34, false);
+      if(digitalRead(sensor_pressure)) {
+        // if we detect pressure, it is most likely because of a rock
+        // or some other unexpected obstruction in the drawer shoot.  Move the
+        // drawer right to release the pressure and try again.
+        
+        // turn off secondary left signal
+        _digitalWrite(secondary_left, LOW);
+        
+        // ensure there isn't lasting pressure in secondary
+        _digitalWrite(secondary_right, HIGH);
+        delay(200);
+        _digitalWrite(secondary_right, LOW);
+        delay(200);
+
+        jam_count += 1;
+        if(jam_count > 3) {
+          all_off();
+          auto_loop_state = 99;
+        } else {
+          auto_loop_state = 50;
+        }
+      }
       break;
     case 5:
       // turn off shaker
       //_digitalWrite(shaker, LOW);
+      jam_count = 0;
       auto_loop_state += 1;
       break;
     case 6:
@@ -601,6 +625,15 @@ void auto_loop() {
     case 11:
       end_right = millis();
       auto_loop_state += 1;
+      break;
+    case 50:
+      // this happens when a jam is detected in the shoot of the drawer
+      if(move_until(secondary_right, &never, 0, true)) {
+        // once we are back all of the way right, try going back to
+        // center position
+        auto_loop_state = 4;
+      }
+      break;
     case 99:
       // an error has occurred, do nothing forever (until power cycled)
       all_off();
