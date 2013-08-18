@@ -1,17 +1,25 @@
 // Creative Commons CC-BY-SA-compatible Open Source Ecology (OSE) License
-// Orientation: when you face the machine, the ejection side is to your left
+// Orientation: when you face the machine, the ejection side is to your right
 // Code for initialization and brick production loop with motion of the
 //   primary cylinder, secondary cylinder, and shaker motor
 
-// TODO: reintroduce and test pause button
 // TODO: reset actions shouldnt eject uncompressed soil
-// TODO: idea: pause if secondary cylinder hits pressure before expected (rock).  Button near pitch forker could tell the machine to move the cylinder back the way it came, and try again (to break the rock), rather than just detecting unexpected pressure and moving on.  Similar logic could happen at all steps and set the press in 'unexpected behavior pause' mode which the operator can resume from once they figure out what caused the problem.
+// TODO: idea: pause if secondary cylinder hits pressure before
+// expected (rock).  Button near pitch forker could tell the machine
+// to move the cylinder back the way it came, and try again (to break
+// the rock), rather than just detecting unexpected pressure and
+// moving on. Similar logic could happen at all steps and set the
+// press in 'unexpected behavior pause' mode which the operator can
+// resume from once they figure out what caused the problem.
 
 #include "CEBManual.h"
 
-// can't use serial line with pins 0 or 1 ...
-const int serial = 1;
+// NOTE: your serial line might conflict with pins you are using for IO
+const boolean serial = true;
 
+// in some versions of the hardware, hydraulic outputs should be inverted
+// with this wrapper function, we can select this with a constant set in
+// the .h file
 void _digitalWrite(int pin, int out) {
   if(invert_output) {
     digitalWrite(pin, !out);
@@ -20,7 +28,10 @@ void _digitalWrite(int pin, int out) {
   }
 }
 
+// the first function called when the arduino turns on
 void setup() {
+  // start by setting outputs low so that floating outputs don't cause
+  // the press to jerk randomly while the arduino boots
   pinMode(primary_up,      OUTPUT);
   pinMode(primary_down,    OUTPUT);
   pinMode(secondary_left,  OUTPUT);
@@ -52,22 +63,21 @@ void setup() {
   }
 }
 
+// these states are used by the various finate state machines
 unsigned int semiautomatic_loop_state = 0;
 int auto_loop_state = 0;
 int reset_state = 0;
 
-void loop_manual() {
-    manual();
-}
-
 void manual() {
-    // a manual mode for directly controlling the cylinders
-    Serial.print(!digitalRead(manual_up));
+    // a manual mode for directly controlling the cylinders with switches
+    // TODO: re-add support for toggling the shaker motor
+    //       see manual_loop() further down
+/*    Serial.print(!digitalRead(manual_up));
     Serial.print(!digitalRead(manual_down));
     Serial.print(!digitalRead(manual_left));
     Serial.print(!digitalRead(manual_right));
     Serial.println();
-
+*/
     _digitalWrite(primary_up,      !digitalRead(manual_up));
     _digitalWrite(primary_down,    !digitalRead(manual_down));
     _digitalWrite(secondary_left,  !digitalRead(manual_left));
@@ -78,55 +88,17 @@ void manual() {
 void loop() {
   // determine which mode we are in
   if(digitalRead(mode_pin) ^ invert_mode_pin) {
+    // manual mode resets the auto loop and reset states so that when we
+    // go back into automatic mode, we start with a reset
     auto_loop_state = 0;
     reset_state = 0;
     
     manual();
-    // semiautomatic_loop();
-    if(serial) {
+    /*if(serial) {
       Serial.println("manual");
-    }
+    }*/
   } else {
-    semiautomatic_loop_state = 0;
-    
     auto_loop();
-    if(serial) {
-      //Serial.println("auto");
-    }
-  }
-}
-
-void check_pause() {
-  // check the pause pin to see if we should pause whats going on.
-  // if we should pause, stay here in this function until we can unpause
-  if(digitalRead(pause_pin)) {
-    if(serial) {
-      //Serial.println('paused');
-    }
-    
-    // save pinout state
-    int primary_up_state      = digitalRead(primary_up);
-    int primary_down_state    = digitalRead(primary_down);
-    int secondary_left_state  = digitalRead(secondary_left_state);
-    int secondary_right_state = digitalRead(secondary_right_state);
-    int shaker_state          = digitalRead(shaker_state);
-  
-    while(digitalRead(pause_pin)) { }
-    
-    // restore pinout state
-    _digitalWrite(primary_up,      primary_up_state);
-    _digitalWrite(primary_down,    primary_down_state);
-    _digitalWrite(secondary_left,  secondary_left_state);
-    _digitalWrite(secondary_right, secondary_right_state);
-    _digitalWrite(shaker,          shaker_state);
-  }
-}
-
-void manual_control(int output_pin, int input_pin) {
-  if(digitalRead(input_pin)) {
-    _digitalWrite(output_pin, LOW);
-  } else {
-    _digitalWrite(output_pin, HIGH);
   }
 }
 
@@ -145,14 +117,6 @@ void semiautomatic_loop() {
   // move the cylinder even after letting go of the button, until a magent 
   // sensor or pressure sensor is triggered.  This is no longer as useful as
   // it used to be since I no longer use magnetic sensors
-  
-  if(serial) {
-    //Serial.print("sensor_primary: ");
-    //Serial.println(analogRead(sensor_primary));
-    
-    //Serial.print("sensor_secondary: ");
-    //Serial.println(analogRead(sensor_secondary));
-  }
   
   if(digitalRead(sensor_pressure)) {
     if(millis() - last_sensor_pressure < 500) {
@@ -288,21 +252,38 @@ void manual_loop() {
   }
 }
 
+int delay_state = 0;
+int delay_in_progress = 0;
+unsigned long delay_start = 0;
+
 int move_until_state = 0;
+boolean move_until_until = false;
+boolean move_until_pressure = false;
 boolean move_until(int pin, fnptr until, int params, boolean pressure){
-  // returns true if parent should move on to the next state
+  // returns true if parent state machine should move on to the next state
   
   switch(move_until_state) {
     case 0:
+      delay_state = 0;
+      move_until_pressure = 0;
+      move_until_until = 0;
       _digitalWrite(pin, HIGH);
       move_until_state += 1;
       return false;
     case 1:
       _digitalWrite(pin, HIGH);
-      if(until(params) || (pressure && digitalRead(sensor_pressure))) {
+
+      // these are stored so that the parent state machine can determine
+      // if it was pressure or the until check that ended the cycle
+      // see state 4 of auto_loop
+      move_until_until = until(params);
+      move_until_pressure = pressure && digitalRead(sensor_pressure);
+      
+      if(move_until_until || move_until_pressure) {
         _digitalWrite(pin, LOW);
         move_until_state += 1;
       }
+      
       return false;
     case 2:
       _digitalWrite(pin, LOW);
@@ -342,6 +323,8 @@ boolean move_until(int pin, fnptr until, int params, boolean pressure){
 
 int sensor_state = 0;
 boolean until_switch(int sensor_pin) {
+  // returns true iff a switch is pressed - pin should have a pullup resistor
+  // with a switch to ground
   if(!digitalRead(sensor_pin)) {
     sensor_state = 0;
     return true;
@@ -351,6 +334,9 @@ boolean until_switch(int sensor_pin) {
 
 const int threshold = 80;
 boolean until_sensor(int sensor_pin) {
+  // returns true iff the analog value on the sensor_pin goes low, then high
+  // then low again.  This was used for the magnet sensors
+  
   if(serial) {
     Serial.println("until sensor");
     Serial.println(sensor_state);
@@ -375,10 +361,9 @@ boolean until_sensor(int sensor_pin) {
   }
 }
 
-int delay_state = 0;
-int delay_in_progress = 0;
-unsigned long delay_start = 0;
 boolean _delay(int t) {
+  // returns true if a delay of t milliseconds have completed since the first
+  // call to _delay
   switch(delay_state) {
     case 0:
       delay_state += 1;
@@ -404,6 +389,8 @@ boolean delay_or_pressure(int t) {
     return _delay(t) || until_pressure_switch(sensor_pressure);
 }
 boolean never(int x) {
+  // never returns true, and is passed in to move_until so that it relies only
+  // on pressure to end the cycle
   return false;
 }
 
@@ -411,58 +398,32 @@ unsigned long begin_right = 0;
 unsigned long end_right = 1000;
 
 boolean reset() {
-  // reset machine to primary all of the way down, and secondary all the way left
+  // reset press.
+  // time the secondary cylinder travel from the left side to the
+  // right side and then get ready to press a brick with whatever was
+  // in the chamber prior to reset
   switch(reset_state) {
     case 0:
       all_off();
       reset_state += 1;
-      delay(100);
+      break;
     case 1:
-      /*
-      _digitalWrite(primary_down, HIGH);
-      if(digitalRead(sensor_pressure)) {
-        reset_state = 2;
-        _digitalWrite(primary_down, LOW);
-        
-        // don't go all of the way up in case it holds the secondary drawer
-        // stuck
-        _digitalWrite(primary_up, HIGH);
-        delay(100);
-        _digitalWrite(primary_up, LOW);
-        
-        // wait for pressure to reset
-        delay(100);
-      }
-      */
-      reset_state += 1;
+      reset_state += move_until(secondary_left, &never, 0, true);
+      begin_right = millis();
       break;
     case 2:
-      _digitalWrite(secondary_left, HIGH);
-      if(digitalRead(sensor_pressure)) {
-        reset_state += 1;
-        _digitalWrite(secondary_left, LOW);
-         // allow time for the pressure to release
-        delay(100);
-        begin_right = millis();
-      }
-      break;
-    case 3:
       // for some reason this step was always getting skipped.  Cant figure
       // out why the pressure is detected so soon
-      _digitalWrite(secondary_right, HIGH);
-      if(digitalRead(sensor_pressure)) {
-        reset_state += 1;
-        _digitalWrite(secondary_right, LOW);
-      }
-    case 4:
+      reset_state += move_until(secondary_right, &never, 0, true);
       end_right = millis();
-      reset_state += 1;
       break;
-    case 5:
+    case 3:
+      // end reset by preparing to compress a block with whatever was in the
+      // chamber when the press was turned on
       auto_loop_state = 4;
       reset_state += 1;
       break;
-    case 6:
+    case 4:
       // done resetting
       return true;
   }
@@ -476,6 +437,7 @@ unsigned long begin_down = 0;
 unsigned long end_down = 0;
 double knob_primary_setting = 0;
 int jam_count = 0;
+boolean is_pressure = false;
 void auto_loop() {
   // This auto_loop is designed as a state machine which gives us something
   // like multithreading on the arduino, which allows us to implement a pause
@@ -483,11 +445,11 @@ void auto_loop() {
   // Every step will be considered complete if the pressure sensor
   // detects high pressure.
 
-  if(serial) {
+  /*if(serial) {
     Serial.print("auto_state");
     Serial.println(auto_loop_state);
     Serial.println(reset_state);
-  }
+  }*/
   
   // wait for press to be moved to pre-loading position - secondary extended, 
   // primary extended
@@ -498,10 +460,7 @@ void auto_loop() {
   switch(auto_loop_state) {
     case 0:
       // turn off everything
-      _digitalWrite(secondary_left,  LOW);
-      _digitalWrite(secondary_right, LOW);
-      _digitalWrite(primary_up,      LOW);
-      _digitalWrite(primary_down,    LOW);
+      all_off();
       
       // turn on shaker
       //_digitalWrite(shaker, shaker_on);
@@ -523,62 +482,65 @@ void auto_loop() {
     case 1:
       // lower primary cylinder to sensor
       //_digitalWrite(shaker, shaker_on);
-      //auto_loop_state += move_until(primary_down, &never, 0, true);
       auto_loop_state += 1;
       break;
     case 2:
-      //end_down = millis();
       auto_loop_state += 1;
       break;
     case 3:
-      // with a sensor, we could do away with this extra time spent going
-      // all of the way down, and then back up again.
-      
+      // TODO: update this comment
       // this will need tweaked depending on your knob.  This works for
       // log fade.  you could remove the pow to make this work well
       // on a normal linear fade.
       // knob_primary_setting should be a float between 0 and 1, where 0 means
       // the chamber should completely fill the chamber with soil and 1 means
       // the chamber should be completely empty
-      knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
-      Serial.println(end_down - begin_down);
-      Serial.println(4200 - ((4200) * knob_primary_setting)+100);
-      Serial.println(knob_primary_setting);
-      
-      auto_loop_state += move_until(primary_down, &_delay, 4200 - ((4200) * knob_primary_setting), true);
-      //auto_loop_state += move_until(primary_down, &_delay, 1000, true);
+      // knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
+
+      // auto_loop_state += move_until(primary_down, &_delay, 4200 - ((4200) * knob_primary_setting), true);
+      knob_primary_setting = (end_right - begin_right) * 1.75;
+      auto_loop_state += move_until(primary_down, &_delay, knob_primary_setting, true);
       break;
     case 4:
       // retract secondary cylinder to center via sensor (to become ready for
       // compression)
+
       //_digitalWrite(shaker, shaker_on);
+
       // you might need to change 0.38 to something else depending on the exact
       // construction of your press.  It might be worth making this a knob
-      // too, so that arduinos can be preloaded with the same firmware for
-      // every press
-      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.34, false);
-      if(digitalRead(sensor_pressure)) {
-        // if we detect pressure, it is most likely because of a rock
-        // or some other unexpected obstruction in the drawer shoot.  Move the
-        // drawer right to release the pressure and try again.
-        
-        // turn off secondary left signal
-        _digitalWrite(secondary_left, LOW);
-        
-        // ensure there isn't lasting pressure in secondary
-        _digitalWrite(secondary_right, HIGH);
-        delay(200);
-        _digitalWrite(secondary_right, LOW);
-        delay(200);
+      // so that arduinos can be preloaded with the same firmware for
+      // every press and changes in the field dont require firmware
+      // upgrades
+      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.36, true);
 
+      // see if there is_pressure or move_until_pressure can be
+      // reliably used as a signal for a jam
+      is_pressure = digitalRead(sensor_pressure);
+      if(move_until_pressure) {
+        auto_loop_state = 50;
+        all_off();
+      }
+/*    
+      // NOTE: it seems that this is sometimes detecting false positive
+      //       jams ... not sure why yet ...
+      // something to test would be:
+      if(move_until_pressure) {
+        // if we stopped because of pressure, it is most likely
+        // because of a rock or some other unexpected obstruction in
+        // the drawer shoot.  Move the drawer right to release the
+        // pressure and try again.
+        
         jam_count += 1;
         if(jam_count > 3) {
+          jam_count = 0;
           all_off();
           auto_loop_state = 99;
         } else {
           auto_loop_state = 50;
         }
       }
+      */
       break;
     case 5:
       // turn off shaker
@@ -619,12 +581,13 @@ void auto_loop() {
       //_digitalWrite(shaker, LOW);
       // NOTE: could technically start drawing the primary cylinder down
       // at this point too.  With all set points on timers though, we can't
-      // do that since it would mess with calibration
+      // do that since it would mess with calibration and unless it was on
+      // a seperate hydraulic source, it wouldn't even save any time
       auto_loop_state += move_until(secondary_right, &never, 0, true);
       break;
     case 11:
       end_right = millis();
-      auto_loop_state += 1;
+      auto_loop_state = 0;
       break;
     case 50:
       // this happens when a jam is detected in the shoot of the drawer
@@ -632,6 +595,8 @@ void auto_loop() {
         // once we are back all of the way right, try going back to
         // center position
         auto_loop_state = 4;
+        Serial.println("goto state 4");
+        delay(250);
       }
       break;
     case 99:
