@@ -488,18 +488,14 @@ void auto_loop() {
       auto_loop_state += 1;
       break;
     case 3:
-      // TODO: update this comment
-      // this will need tweaked depending on your knob.  This works for
-      // log fade.  you could remove the pow to make this work well
-      // on a normal linear fade.
-      // knob_primary_setting should be a float between 0 and 1, where 0 means
-      // the chamber should completely fill the chamber with soil and 1 means
-      // the chamber should be completely empty
-      // knob_primary_setting = pow(0.1 + analogRead(knob_primary) / 1700.0, 0.7);
-
-      // auto_loop_state += move_until(primary_down, &_delay, 4200 - ((4200) * knob_primary_setting), true);
+      // TODO: use the knob to adjust this setting
       knob_primary_setting = (end_right - begin_right) * 1.75;
-      auto_loop_state += move_until(primary_down, &_delay, knob_primary_setting, true);
+      // I dont know why, but I was getting a small pressure spike right when
+      // the cylinder started going down, so I changed it to only go off of timing
+      // and ignore pressure, which doesn't seem ideal, but was the only quick
+      // way to get it going.  It could be that a small delay or something like that
+      // might help ...
+      auto_loop_state += move_until(primary_down, &_delay, knob_primary_setting, false);
       break;
     case 4:
       // retract secondary cylinder to center via sensor (to become ready for
