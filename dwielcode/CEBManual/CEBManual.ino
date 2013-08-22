@@ -438,6 +438,7 @@ unsigned long end_down = 0;
 double knob_primary_setting = 0;
 int jam_count = 0;
 boolean is_pressure = false;
+unsigned long overextend_delay = 100;
 void auto_loop() {
   // This auto_loop is designed as a state machine which gives us something
   // like multithreading on the arduino, which allows us to implement a pause
@@ -569,9 +570,20 @@ void auto_loop() {
       // extend primary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
       auto_loop_state += move_until(primary_up, &never, 0, true);
-      begin_right = millis();
       break;
     case 10:
+      // in the event that the primary cylinder extends too far up, retract
+      // it down some to account for this
+      // TODO: eventually this might have to be a knob (for those machines
+      //       which have this problem
+      if(overextend_delay == 0) {
+        auto_loop_state += 1;
+      } else {
+        auto_loop_state += move_until(primary_down, &_delay, overextend_delay, false);
+      }
+      begin_right = millis();
+      break;
+    case 11:
       // push block into queue and ready for loading new soil
       // extend secondary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
@@ -581,7 +593,7 @@ void auto_loop() {
       // a seperate hydraulic source, it wouldn't even save any time
       auto_loop_state += move_until(secondary_right, &never, 0, true);
       break;
-    case 11:
+    case 12:
       end_right = millis();
       auto_loop_state = 0;
       break;
