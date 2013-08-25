@@ -38,6 +38,7 @@ const int sensor_primary   = A4;
 const int sensor_secondary = A5;
 const int sensor_pressure  = A3;
 const int knob_primary     = A2;
+const int knob_secondary   = A1;
 
 // output pins
 const int primary_down    = 2;

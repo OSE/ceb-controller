@@ -509,7 +509,8 @@ void auto_loop() {
       // so that arduinos can be preloaded with the same firmware for
       // every press and changes in the field dont require firmware
       // upgrades
-      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * 0.36, true);
+      knob_secondary_setting = 0.3 + 0.14*analogRead(knob_secondary)/1024.0;
+      auto_loop_state += move_until(secondary_left, &_delay, (end_right - begin_right) * knob_secondary_setting, true);
 
       // see if there is_pressure or move_until_pressure can be
       // reliably used as a signal for a jam
