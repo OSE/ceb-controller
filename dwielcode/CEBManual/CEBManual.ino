@@ -436,6 +436,7 @@ unsigned long now;
 unsigned long begin_down = 0;
 unsigned long end_down = 0;
 double knob_primary_setting = 0;
+double knob_secondary_setting = 0;
 int jam_count = 0;
 boolean is_pressure = false;
 unsigned long overextend_delay = 100;
@@ -490,7 +491,9 @@ void auto_loop() {
       break;
     case 3:
       // TODO: use the knob to adjust this setting
-      knob_primary_setting = (end_right - begin_right) * 1.75;
+      knob_primary_setting = 1.5 + analogRead(knob_secondary)/1024.0;
+      // knob_primary_setting = (end_right - begin_right) * 1.75;
+      knob_primary_setting = (end_right - begin_right) * knob_primary_setting;
       // I dont know why, but I was getting a small pressure spike right when
       // the cylinder started going down, so I changed it to only go off of timing
       // and ignore pressure, which doesn't seem ideal, but was the only quick
