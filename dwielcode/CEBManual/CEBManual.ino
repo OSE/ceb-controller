@@ -503,9 +503,11 @@ void auto_loop() {
     case 3:
       turn_shaker_on();
 
-      knob_primary_setting = 1.5 + analogRead(knob_secondary)/1024.0;
       // knob_primary_setting = (end_right - begin_right) * 1.75;
+
+      knob_primary_setting = 0.75 + analogRead(knob_secondary)/1024.0;
       knob_primary_setting = (end_right - begin_right) * knob_primary_setting;
+
       // I dont know why, but I was getting a small pressure spike right when
       // the cylinder started going down, so I changed it to only go off of timing
       // and ignore pressure, which doesn't seem ideal, but was the only quick
@@ -601,7 +603,7 @@ void auto_loop() {
       if(overextend_delay == 0) {
         auto_loop_state += 1;
       } else {
-        auto_loop_state += move_until(primary_down, &_delay, overextend_delay, false);
+        auto_loop_state += move_until(primary_down, &_delay, (end_right - begin_right) / 1000 * overextend_delay, false);
       }
       begin_right = millis();
       break;
