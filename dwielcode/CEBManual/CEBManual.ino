@@ -433,9 +433,9 @@ boolean reset() {
 const int shaker_on = HIGH;
 
 void turn_shaker_on() {
-  if(digitalRead(manual_shaker)) {
-    _digitalWrite(shaker, shaker_on);
-  }
+  //if(digitalRead(manual_shaker)) {
+  _digitalWrite(shaker, shaker_on);
+  //}
 }
 
 void turn_shaker_off() {
