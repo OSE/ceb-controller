@@ -82,7 +82,7 @@ void manual() {
     _digitalWrite(primary_down,    !digitalRead(manual_down));
     _digitalWrite(secondary_left,  !digitalRead(manual_left));
     _digitalWrite(secondary_right, !digitalRead(manual_right));
-    _digitalWrite(shaker,          LOW);
+    _digitalWrite(shaker,          !digitalRead(manual_shaker));
 }
 
 void loop() {
@@ -430,7 +430,18 @@ boolean reset() {
   return false;
 }
 
-const int shaker_on = LOW;
+const int shaker_on = HIGH;
+
+void turn_shaker_on() {
+  if(digitalRead(manual_shaker)) {
+    _digitalWrite(shaker, shaker_on);
+  }
+}
+
+void turn_shaker_off() {
+  _digitalWrite(shaker, !shaker_on);
+}
+
 unsigned long loop_start = 0;
 unsigned long now;
 unsigned long begin_down = 0;
@@ -464,8 +475,7 @@ void auto_loop() {
       // turn off everything
       all_off();
       
-      // turn on shaker
-      //_digitalWrite(shaker, shaker_on);
+      turn_shaker_on();
       auto_loop_state += 1;
 
       // if we make it all of the way through the loop in less than 100ms
@@ -483,14 +493,16 @@ void auto_loop() {
       break;
     case 1:
       // lower primary cylinder to sensor
-      //_digitalWrite(shaker, shaker_on);
+      turn_shaker_on();
       auto_loop_state += 1;
       break;
     case 2:
+      turn_shaker_on();
       auto_loop_state += 1;
       break;
     case 3:
-      // TODO: use the knob to adjust this setting
+      turn_shaker_on();
+
       knob_primary_setting = 1.5 + analogRead(knob_secondary)/1024.0;
       // knob_primary_setting = (end_right - begin_right) * 1.75;
       knob_primary_setting = (end_right - begin_right) * knob_primary_setting;
@@ -502,6 +514,7 @@ void auto_loop() {
       auto_loop_state += move_until(primary_down, &_delay, knob_primary_setting, false);
       break;
     case 4:
+      turn_shaker_on();
       // retract secondary cylinder to center via sensor (to become ready for
       // compression)
 
@@ -544,12 +557,13 @@ void auto_loop() {
       */
       break;
     case 5:
-      // turn off shaker
-      //_digitalWrite(shaker, LOW);
+      turn_shaker_off();
+
       jam_count = 0;
       auto_loop_state += 1;
       break;
     case 6:
+      turn_shaker_off();
       // compress block
       // extend primary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
@@ -558,24 +572,28 @@ void auto_loop() {
       auto_loop_state += move_until(primary_up, &never, 0, true);
       break;
     case 7:
+      turn_shaker_off();
       // reduce pressure on block
       // slightly retract primary cylinder to ready ejection
       //_digitalWrite(shaker, LOW);
       auto_loop_state += move_until(primary_down, &_delay, 100, true);
       break;
     case 8:
+      turn_shaker_off();
       // allow brick to be ejected out of compression chamber
       // retract secondary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
       auto_loop_state += move_until(secondary_left, &never, 0, true);
       break;
     case 9:
+      turn_shaker_off();
       // eject block out of compression chamber
       // extend primary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
       auto_loop_state += move_until(primary_up, &never, 0, true);
       break;
     case 10:
+      turn_shaker_off();
       // in the event that the primary cylinder extends too far up, retract
       // it down some to account for this
       // TODO: eventually this might have to be a knob (for those machines
@@ -588,6 +606,7 @@ void auto_loop() {
       begin_right = millis();
       break;
     case 11:
+      turn_shaker_off();
       // push block into queue and ready for loading new soil
       // extend secondary cylinder for time or to pressure
       //_digitalWrite(shaker, LOW);
@@ -598,10 +617,12 @@ void auto_loop() {
       auto_loop_state += move_until(secondary_right, &never, 0, true);
       break;
     case 12:
+      turn_shaker_off();
       end_right = millis();
       auto_loop_state = 0;
       break;
     case 50:
+      turn_shaker_off();
       // this happens when a jam is detected in the shoot of the drawer
       if(move_until(secondary_right, &never, 0, true)) {
         // once we are back all of the way right, try going back to
@@ -612,6 +633,7 @@ void auto_loop() {
       }
       break;
     case 99:
+      turn_shaker_off();
       // an error has occurred, do nothing forever (until power cycled)
       all_off();
       break;
