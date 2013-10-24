@@ -29,5 +29,3 @@ information about compressed earth blocks.
 The Global Village Construction Set (GVCS) is an open technological platform that allows
 for the easy fabrication of the 50 different Industrial Machines that it takes to build a
 small civilization with modern comforts.
-
-# Need to redo controller code for pressure sensing
