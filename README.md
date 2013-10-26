@@ -17,6 +17,7 @@ information about compressed earth blocks.
 If you're using a release, download it from https://github.com/OSE/ceb-controller/releases and extract it.
 
 If you want to work with the latest development code, check out the code:
+
     git clone https://github.com/OSE/ceb-controller.git
 
 ### Compile with scons
