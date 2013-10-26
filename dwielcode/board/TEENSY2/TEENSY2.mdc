@@ -1,9 +1,0 @@
-PCBNEW-LibDoc----V1  Mon 14 May 2012 12:02:34 PM EDT
-#
-$MODULE TEENSY2
-Li TEENSY2
-Cd 28 pins DIL package, round pads, width 600mil
-Kw DIL
-$EndMODULE
-#
-$EndLIBDOC
