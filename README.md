@@ -23,6 +23,9 @@ If you want to work with the latest development code, check out the code:
 The code is in CEBManual (even though it is automatic, it also allows
 for manual control)
 
+the board directory has the necessary details to build a controller
+board that this code runs on.
+
 --------------------------------------------------------------------------------------
 
 ### Part of the [Global Village Construction Set](http://opensourceecology.org/gvcs.php)
