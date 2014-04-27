@@ -8,9 +8,9 @@ information about compressed earth blocks.
 
 ## How to compile (on Ubuntu Linux)
 
-### Install arduino and scons
+### Install arduino
 
-    sudo apt-get install -y arduino scons
+    sudo apt-get install -y arduino
 
 ### Get the code
 
@@ -19,14 +19,6 @@ If you're using a release, download it from https://github.com/OSE/ceb-controlle
 If you want to work with the latest development code, check out the code:
 
     git clone https://github.com/OSE/ceb-controller.git
-
-### Compile with scons
-    cd ceb-controller/cebController
-    scons
-
-### Upload to attached Arduino
-
-    scons upload
 
 --------------------------------------------------------------------------------------
 
