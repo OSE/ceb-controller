@@ -20,6 +20,9 @@ If you want to work with the latest development code, check out the code:
 
     git clone https://github.com/OSE/ceb-controller.git
 
+The code is in CEBManual (even though it is automatic, it also allows
+for manual control)
+
 --------------------------------------------------------------------------------------
 
 ### Part of the [Global Village Construction Set](http://opensourceecology.org/gvcs.php)
