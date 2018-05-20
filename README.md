@@ -28,7 +28,7 @@ board that this code runs on.
 
 --------------------------------------------------------------------------------------
 
-### Part of the [Global Village Construction Set](http://opensourceecology.org/gvcs.php)
+### Part of the [Global Village Construction Set](http://opensourceecology.org/wiki/Global_Village_Construction_Set)
 
 The Global Village Construction Set (GVCS) is an open technological platform that allows
 for the easy fabrication of the 50 different Industrial Machines that it takes to build a
